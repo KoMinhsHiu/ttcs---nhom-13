@@ -59,4 +59,13 @@ public class LogsController {
     public void setLogs(Vector<LogO> logs){
         this.logs = logs;
     }
+    
+    public void printLogs(){
+        System.out.println(this.logs.size());
+        for (int i = 0 ;i < this.logs.size(); i++){
+            System.out.println(this.logs.get(i).getNote());
+        }
+    }
 }
+
+

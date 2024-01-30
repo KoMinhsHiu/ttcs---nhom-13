@@ -15,7 +15,14 @@ public class LogO {
     public LogO() {
         this.ID_Log = -1;
     }
-
+    /**
+     * 
+     * @param ID_Log
+     * @param ID_Type
+     * @param Price
+     * @param Note
+     * @param DateString 
+     */
     public LogO(int ID_Log, int ID_Type, double Price, String Note, String DateString) {
         this.ID_Log = ID_Log;
         this.ID_Type = ID_Type;
