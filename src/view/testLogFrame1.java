@@ -40,6 +40,9 @@ public class testLogFrame1 extends javax.swing.JFrame {
         previousDateBtn = new javax.swing.JButton();
         totalInDayLabel = new javax.swing.JLabel();
         totalInDayValueLabel = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        logTable = new javax.swing.JTable();
+        deleteBtn = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
 
@@ -110,6 +113,31 @@ public class testLogFrame1 extends javax.swing.JFrame {
         getContentPane().add(jPanel1);
         jPanel1.setBounds(60, 40, 250, 210);
 
+        logTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Mục", "Số tiền", "Ghi chú", "Loại"
+            }
+        ));
+        jScrollPane2.setViewportView(logTable);
+
+        getContentPane().add(jScrollPane2);
+        jScrollPane2.setBounds(330, 50, 360, 120);
+
+        deleteBtn.setText("Xóa");
+        deleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(deleteBtn);
+        deleteBtn.setBounds(330, 200, 51, 23);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -127,6 +155,10 @@ public class testLogFrame1 extends javax.swing.JFrame {
     private void previousDateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousDateBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_previousDateBtnActionPerformed
+
+    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -169,11 +201,14 @@ public class testLogFrame1 extends javax.swing.JFrame {
     private javax.swing.JTextField amountValueLabel;
     private javax.swing.JPanel contentWrapper;
     private javax.swing.JLabel dateValueLabel;
+    private javax.swing.JButton deleteBtn;
     private javax.swing.JTextArea descriptionText;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable logTable;
     private javax.swing.JButton nextDateBtn;
     private javax.swing.JButton previousDateBtn;
     private javax.swing.JLabel totalInDayLabel;

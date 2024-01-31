@@ -6,7 +6,15 @@
 package view;
 import Utils.DateHelpder;
 import controller.LogsController;
+import java.math.BigDecimal;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
 import model.objects.LogO;
+import model.objects.LogsDB;
+import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.table.JTableHeader;
 /**
  *
  * @author sidac
@@ -41,9 +49,12 @@ public class testLogFrame extends javax.swing.JFrame {
         addDataBtn = new javax.swing.JButton();
         nextDateBtn = new javax.swing.JButton();
         previousDateBtn = new javax.swing.JButton();
+        deleteBtn = new javax.swing.JButton();
         totalInDayLabel = new javax.swing.JLabel();
         totalInDayValueLabel = new javax.swing.JLabel();
-
+        logTable = new javax.swing.JTable();
+        jScrollPane = new javax.swing.JScrollPane();
+        changeList = new Vector<>();
         jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -99,45 +110,194 @@ public class testLogFrame extends javax.swing.JFrame {
                 previousDateBtnActionPerformed(evt);
             }
         });
+        jPanel1.add(previousDateBtn);
+
+        previousDateBtn.setBounds(100, 20, 20, 23);
 
         totalInDayLabel.setText("Tổng:");
         jPanel1.add(totalInDayLabel);
         totalInDayLabel.setBounds(148, 4, 30, 20);
 
-        totalInDayValueLabel.setText("jLabel3");
+        totalInDayValueLabel.setText(this.totalInUnitTime.toString());
         jPanel1.add(totalInDayValueLabel);
         totalInDayValueLabel.setBounds(190, 4, 40, 20);
 
         getContentPane().add(jPanel1);
         jPanel1.setBounds(60, 40, 250, 210);
 
+        logTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Mục", "Số tiền", "Ghi chú", "Thời gian", "Chọn"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        JTableHeader header = logTable.getTableHeader();
+        header.addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columnIndex = header.columnAtPoint(e.getPoint());
+                if (columnIndex == 5) {
+                    // Xử lý sự kiện click vào header của cột 5 ở đây
+                    toggleDeleteAll();
+                }
+            }
+        });
+        this.fillLogTable();
+        logTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                logTableMouseClicked(evt);
+            }
+        });
+        jScrollPane.setViewportView(logTable);
+
+        getContentPane().add(jScrollPane);
+        jScrollPane.setBounds(330, 50, 360, 120);
+        
+        deleteBtn.setText("Xóa");
+        deleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(deleteBtn);
+        deleteBtn.setBounds(330, 200, 51, 23);
+        int width = 800;
+        int height = 600;
+        this.setSize(width, height);
         pack();
     }// </editor-fold>                        
 
     private void addDataBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
         String note = this.descriptionText.getText();
-        int amount = Integer.parseInt(this.amountValueLabel.getText());
-        this.logsController.addLog(new LogO(this.idUser, this.mode, amount, note, this.curDateValue));
+        BigDecimal amount = new BigDecimal(this.amountValueLabel.getText());
+        this.logsController.addLog(new LogO(this.idUser, this.mode, amount, note, this.curDateValue), 1);
         this.logsController.printLogs();
-
+        this.refreshState();
         // TODO add your handling code here:
     }                            
     private void nextDateBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        this.curDateValue = Utils.DateHelpder.getDateFormattedWithOffset(curDateValue, "d", 1);
+        this.curDateValue = DateHelpder.getDateFormattedWithOffset(curDateValue, "d", 1);
         this.dateValueLabel.setText(this.curDateValue);
-        // TODO add your handling code here:
+        LogsDB log =  new LogsDB();
+        this.conditionsForFilter.removeAllElements();
+        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
+        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
+        logsController.filter(conditionsForFilter, conditionsForSort);
+        this.fillLogTable();
+        
     }                                           
-
+    
+    /**
+     * Đổi ngày (trước curDate 1 day)
+     * @param evt 
+     */
     private void previousDateBtnActionPerformed(java.awt.event.ActionEvent evt) {                                                
-        // TODO add your handling code here:
-        this.curDateValue = Utils.DateHelpder.getDateFormattedWithOffset(curDateValue, "d", -1);
+        LogsDB log = new LogsDB();
+        this.curDateValue = DateHelpder.getDateFormattedWithOffset(curDateValue, "d", -1);
         this.dateValueLabel.setText(this.curDateValue);
+        this.conditionsForFilter.removeAllElements();
+        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
+        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
+        logsController.filter(conditionsForFilter, conditionsForSort);
+        this.fillLogTable();
     }  
 
+    private void toggleDeleteAll(){
+        this.isDeleteAllActive = !this.isDeleteAllActive;
+        for (int i  =0; i < logTable.getRowCount(); i++){
+            // Chọn các hàng được chọn
+            logTable.setValueAt(this.isDeleteAllActive, i, 5);
+        }
+    }
+    
+    private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        Vector<Integer> idList = new Vector<Integer>();
+        LogsDB logs = new LogsDB();
+        for (int i  =0; i < logTable.getRowCount(); i++){
+            // Chọn các hàng được chọn
+            if (logTable.getValueAt(i, 5) != null && (boolean)logTable.getValueAt(i, 5) == true){
+                int id = (int)logTable.getValueAt(i, 0);
+                idList.add(id);
+            }
+        }
+        logs.deleteLogs(idList);
+        this.logsController.filter(conditionsForFilter, conditionsForSort);
+        this.fillLogTable();
+    } 
+    private void logTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logTableMouseClicked
+        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+        int row = logTable.getSelectedRow();
+        int id = (int)model.getValueAt(row, 0);
+        BigDecimal amount = new BigDecimal("0");
+        try {
+            amount = (BigDecimal) model.getValueAt(row, 2);
+            System.out.print(amount);
+        }
+        catch(Exception e){
+            amount = new BigDecimal((String)model.getValueAt(row, 2));
+        }
+        
+        this.changeList.add(id);
+        this.logsController.updateDataRow(id, (String)model.getValueAt(row, 3), amount);
+        this.logsController.updateLogWitdID(id);
+
+
+    }//GEN-LAST:event_logTableMouseClicked
+
+    private void refreshState(){
+        this.logsController.filter(this.conditionsForFilter, this.conditionsForSort);
+        this.fillLogTable();
+        this.totalInUnitTime = this.logsController.getTotalAmountInDay();
+        this.totalInDayValueLabel.setText(this.totalInUnitTime.toString());
+    }
+    
     private void initValues(){
         this.curDateValue = Utils.DateHelpder.getCurrentDateFormatted();
         this.logsController = new LogsController();
+        this.conditionsForFilter = new Vector<Object[]>();
+        
+        //Thêm điều kiện filter theo ngày
+        this.conditionsForFilter.add(new Object[]{"date",DateHelpder.getCurrentDateFormatted(), "from"});
+        this.conditionsForFilter.add(new Object[]{"date",DateHelpder.getCurrentDateFormatted(), "to"});
+        
+        this.logsController = new LogsController();
+        
+        this.logsController.filter(conditionsForFilter, conditionsForSort);
+        
+        this.totalInUnitTime = this.logsController.getTotalAmountInDay();
+        
+        
     }
+    
+    private void fillLogTable(){
+        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+        model.setRowCount(0);
+        Object[][] tableData = logsController.logDataToTable(rowLogTableStructure);
+        for (Object[] item : tableData) {
+            model.addRow(item);
+        }
+    }  
+
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -187,9 +347,20 @@ public class testLogFrame extends javax.swing.JFrame {
     private javax.swing.JButton previousDateBtn;
     private javax.swing.JLabel totalInDayLabel;
     private javax.swing.JLabel totalInDayValueLabel;
+    private javax.swing.JTable logTable;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JButton deleteBtn;
+
     private int idUser = 0;
     private int mode = 0;
     private String curDateValue;
     private LogsController logsController;
+    private Vector<Integer> changeList;
+    private Vector<Object[]> conditionsForFilter = new Vector<>();
+    private Vector<Object[]> conditionsForSort = new Vector<>();
+    private final String[] rowLogTableStructure = new String[]{"id", "idOfItemInCategory", "price", "note", "date"};
+    private boolean isDeleteAllActive = false;
+    private BigDecimal totalInUnitTime;
+    private LogsDB logs = new LogsDB();
     // End of variables declaration                   
 }

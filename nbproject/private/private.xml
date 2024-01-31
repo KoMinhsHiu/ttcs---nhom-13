@@ -5,8 +5,11 @@
         <group>
             <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/view/testLogFrame1.java</file>
             <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/view/testLogFrame.java</file>
+            <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/Utils/MoneyChanger.java</file>
             <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/controller/LogsController.java</file>
+            <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/model/objects/LogsDB.java</file>
             <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/model/objects/LogO.java</file>
+            <file>file:/C:/Users/sidac/OneDrive/Documents/NetBeansProjects/QLTC/src/Utils/Utils.java</file>
         </group>
     </open-files>
 </project-private>

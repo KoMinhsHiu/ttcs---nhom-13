@@ -22,7 +22,6 @@ public class JDBCConnection {
         String password = "2612";
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
-            System.out.println("Connect thành công");
             return connection;
         } catch (SQLException e) {
             System.out.println("Có lỗi!");
