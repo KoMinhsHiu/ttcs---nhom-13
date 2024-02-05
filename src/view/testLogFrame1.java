@@ -43,6 +43,22 @@ public class testLogFrame1 extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         logTable = new javax.swing.JTable();
         deleteBtn = new javax.swing.JButton();
+        backActionBtn = new javax.swing.JButton();
+        nextActionBtn = new javax.swing.JButton();
+        dateChooserLabel = new javax.swing.JLabel();
+        fromDateValueLabel = new javax.swing.JTextField();
+        toDateValueLabel = new javax.swing.JTextField();
+        totalRowCountLabel = new javax.swing.JLabel();
+        amounChoosertLabel = new javax.swing.JLabel();
+        fromAmountValueLabel = new javax.swing.JTextField();
+        toAmountValueLabel = new javax.swing.JTextField();
+        filterActionBtn = new javax.swing.JButton();
+        sortBtn = new javax.swing.JButton();
+        typeChooserCombox = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        itemTypeLabel = new javax.swing.JLabel();
+        typeOfSortValueBtn = new javax.swing.JButton();
+        testText = new javax.swing.JLabel();
 
         jButton1.setText("jButton1");
 
@@ -107,11 +123,16 @@ public class testLogFrame1 extends javax.swing.JFrame {
         totalInDayLabel.setBounds(148, 4, 30, 20);
 
         totalInDayValueLabel.setText("jLabel3");
+        totalInDayValueLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                totalInDayValueLabelMouseClicked(evt);
+            }
+        });
         jPanel1.add(totalInDayValueLabel);
         totalInDayValueLabel.setBounds(190, 4, 40, 20);
 
         getContentPane().add(jPanel1);
-        jPanel1.setBounds(60, 40, 250, 210);
+        jPanel1.setBounds(50, 40, 260, 210);
 
         logTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -138,6 +159,105 @@ public class testLogFrame1 extends javax.swing.JFrame {
         getContentPane().add(deleteBtn);
         deleteBtn.setBounds(330, 200, 51, 23);
 
+        backActionBtn.setText("<");
+        backActionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backActionBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(backActionBtn);
+        backActionBtn.setBounds(330, 30, 41, 23);
+
+        nextActionBtn.setText(">");
+        nextActionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextActionBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(nextActionBtn);
+        nextActionBtn.setBounds(370, 30, 41, 23);
+
+        dateChooserLabel.setText("Ngày:");
+        getContentPane().add(dateChooserLabel);
+        dateChooserLabel.setBounds(410, 190, 40, 14);
+
+        fromDateValueLabel.setText("jTextField1");
+        getContentPane().add(fromDateValueLabel);
+        fromDateValueLabel.setBounds(460, 190, 90, 20);
+
+        toDateValueLabel.setText("jTextField2");
+        getContentPane().add(toDateValueLabel);
+        toDateValueLabel.setBounds(590, 190, 90, 20);
+
+        totalRowCountLabel.setText("jLabel3");
+        getContentPane().add(totalRowCountLabel);
+        totalRowCountLabel.setBounds(650, 30, 34, 14);
+
+        amounChoosertLabel.setText("Số tiền: ");
+        getContentPane().add(amounChoosertLabel);
+        amounChoosertLabel.setBounds(410, 230, 50, 14);
+
+        fromAmountValueLabel.setText("jTextField1");
+        fromAmountValueLabel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fromAmountValueLabelActionPerformed(evt);
+            }
+        });
+        getContentPane().add(fromAmountValueLabel);
+        fromAmountValueLabel.setBounds(460, 230, 90, 20);
+
+        toAmountValueLabel.setText("jTextField2");
+        getContentPane().add(toAmountValueLabel);
+        toAmountValueLabel.setBounds(590, 230, 90, 20);
+
+        filterActionBtn.setText("Lọc");
+        filterActionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterActionBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(filterActionBtn);
+        filterActionBtn.setBounds(330, 230, 50, 23);
+
+        sortBtn.setText("Sắp xếp");
+        sortBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(sortBtn);
+        sortBtn.setBounds(310, 260, 80, 23);
+
+        typeChooserCombox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        typeChooserCombox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeChooserComboxActionPerformed(evt);
+            }
+        });
+        getContentPane().add(typeChooserCombox);
+        typeChooserCombox.setBounds(460, 260, 57, 20);
+
+        jLabel4.setText("jLabel4");
+        getContentPane().add(jLabel4);
+        jLabel4.setBounds(670, 50, 34, 14);
+
+        itemTypeLabel.setText("Mục:");
+        getContentPane().add(itemTypeLabel);
+        itemTypeLabel.setBounds(410, 260, 23, 14);
+
+        typeOfSortValueBtn.setText("A-Z");
+        typeOfSortValueBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeOfSortValueBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(typeOfSortValueBtn);
+        typeOfSortValueBtn.setBounds(590, 260, 50, 23);
+
+        testText.setText("jLabel2");
+        getContentPane().add(testText);
+        testText.setBounds(730, 30, 110, 14);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -159,6 +279,38 @@ public class testLogFrame1 extends javax.swing.JFrame {
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_deleteBtnActionPerformed
+
+    private void backActionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_backActionBtnActionPerformed
+
+    private void nextActionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextActionBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nextActionBtnActionPerformed
+
+    private void fromAmountValueLabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fromAmountValueLabelActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fromAmountValueLabelActionPerformed
+
+    private void typeChooserComboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeChooserComboxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_typeChooserComboxActionPerformed
+
+    private void filterActionBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterActionBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_filterActionBtnActionPerformed
+
+    private void sortBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sortBtnActionPerformed
+
+    private void typeOfSortValueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeOfSortValueBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_typeOfSortValueBtnActionPerformed
+
+    private void totalInDayValueLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_totalInDayValueLabelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalInDayValueLabelMouseClicked
 
     /**
      * @param args the command line arguments
@@ -198,20 +350,36 @@ public class testLogFrame1 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addDataBtn;
+    private javax.swing.JLabel amounChoosertLabel;
     private javax.swing.JTextField amountValueLabel;
+    private javax.swing.JButton backActionBtn;
     private javax.swing.JPanel contentWrapper;
+    private javax.swing.JLabel dateChooserLabel;
     private javax.swing.JLabel dateValueLabel;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JTextArea descriptionText;
+    private javax.swing.JButton filterActionBtn;
+    private javax.swing.JTextField fromAmountValueLabel;
+    private javax.swing.JTextField fromDateValueLabel;
+    private javax.swing.JLabel itemTypeLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable logTable;
+    private javax.swing.JButton nextActionBtn;
     private javax.swing.JButton nextDateBtn;
     private javax.swing.JButton previousDateBtn;
+    private javax.swing.JButton sortBtn;
+    private javax.swing.JLabel testText;
+    private javax.swing.JTextField toAmountValueLabel;
+    private javax.swing.JTextField toDateValueLabel;
     private javax.swing.JLabel totalInDayLabel;
     private javax.swing.JLabel totalInDayValueLabel;
+    private javax.swing.JLabel totalRowCountLabel;
+    private javax.swing.JComboBox<String> typeChooserCombox;
+    private javax.swing.JButton typeOfSortValueBtn;
     // End of variables declaration//GEN-END:variables
 }

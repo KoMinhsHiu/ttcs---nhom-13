@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-public class DateHelpder {
+public class DateHelper {
 
     /**
      * Lấy ngày hiện tại và định dạng theo "dd/MM/yyyy"
@@ -122,16 +122,18 @@ public class DateHelpder {
             // Thêm các định dạng khác nếu cần
         };
         for (String dateFormat : possibleDateFormats) {
+            String ans = "";
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             try {
                 // Cố gắng phân tích (parse) chuỗi đầu vào
                 Date date = sdf.parse(input);
-                String ans = new SimpleDateFormat("yyyy-MM-dd").format(date);
+                ans = new SimpleDateFormat("yyyy-MM-dd").format(date);
                 return ans;
                 // Nếu phân tích thành công, chuyển đổi về định dạng "yyyy-MM-dd"
             } catch (ParseException e) {
                 // Nếu có lỗi, tiếp tục với định dạng tiếp theo
             }
+
         }
         System.err.println("Không thể phân tích chuỗi đầu vào thành ngày tháng.");
         return null;
@@ -213,5 +215,21 @@ public class DateHelpder {
         }
 
         return result;
+    }
+
+    public static boolean isDateStringAvailable(String dateToCheck, String format){
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setLenient(false);
+
+        try {
+            sdf.parse(dateToCheck);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+    
+    public static boolean isDateStringAvailable(String dateToCheck){
+        return isDateStringAvailable(dateToCheck, "dd/mm/yyyy");
     }
 }

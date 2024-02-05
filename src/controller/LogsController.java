@@ -3,7 +3,7 @@ package controller;
 import java.util.Vector;
 import model.objects.LogO;
 import model.objects.LogsDB;
-import Utils.DateHelpder;
+import Utils.DateHelper;
 import java.math.BigDecimal;
 
 public class LogsController {
@@ -142,7 +142,7 @@ public class LogsController {
                         data[i][j] = this.getLogAt(i).getNote();
                         break;
                     case "idOfItemInCategory":
-                        data[i][j] = this.getLogAt(i).getID_Type();
+                        data[i][j] = this.getLogAt(i).getName_Type();
                         break;
                     default:
                         break;
@@ -154,7 +154,9 @@ public class LogsController {
     public void filter(Vector<Object[]> conditionsForFilter, Vector<Object[]> conditionsForSort){
         this.logs = new Vector<>();
         for (Object[] item : conditionsForFilter){
-            item[1] = (String)DateHelpder.convertStringToSQLDate((String)item[1]);
+            if (item[0] == "date"){
+                item[1] = (String)DateHelper.convertStringToSQLDate((String)item[1]);
+            }
         }
         Vector<String> conditionForFilter = new Vector<String>();
         for (Object[] item : conditionsForFilter){
@@ -166,12 +168,12 @@ public class LogsController {
                     conditionForFilter.add("date <= " + "'" + item[1] + "'");
                 }
             }
-            else if (item[0] == "amount"){
+            else if (item[0] == "price"){
                 if (item[2] == "from"){
-                    conditionForFilter.add("amount >= " + "'" + item[1] + "'");
+                    conditionForFilter.add("price >= " + "" + item[1] + "");
                 }
                 else if (item[2] == "to"){
-                    conditionForFilter.add("amount <= " + "'" + item[1] + "'");
+                    conditionForFilter.add("price <= " + "" + item[1] + "");
                 }
             }
         }
@@ -185,20 +187,19 @@ public class LogsController {
                     conditionForSort.add("date DESC");
                 }
             }
-            else if (item[0] == "amount"){
+            else if (item[0] == "price"){
                 if (item[1] == "ASC"){
-                    conditionForSort.add("amount ASC");
+                    conditionForSort.add("price ASC");
                 }
                 else if (item[1] == "DESC"){
-                    conditionForSort.add("amount DESC");
+                    conditionForSort.add("price DESC");
                 }
             }
         }
         Vector<Object[]> data = new Vector<Object[]>();
         data = new LogsDB().getDataWithCondition(conditionForFilter, conditionForSort);
-        System.out.println(data.size());
         for (Object[] item : data){
-            this.addLog(new LogO((int)item[0], (int)item[1], (int)item[2], (BigDecimal)item[3], (String)item[4], (String)item[5]));
+            this.addLog(new LogO((int)item[0], (String)item[2], (int)item[1], (BigDecimal)item[3], (String)item[4], (String)item[5]));
         }
         // Transactions transactions = new Transactions();
         // transactions.vectorToTransactions(data);
@@ -211,7 +212,6 @@ public class LogsController {
         for (int i = 0; i < this.getSize(); i++) {
             if(this.getLogAt(i).getID() == id){
                 this.getLogAt(i).setNote(note);
-                System.out.println("amount: " + amount);
                 this.getLogAt(i).setPrice(amount);
                 break;
             }

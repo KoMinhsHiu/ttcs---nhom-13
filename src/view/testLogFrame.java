@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package view;
-import Utils.DateHelpder;
+import Utils.DateHelper;
 import controller.LogsController;
 import java.math.BigDecimal;
 import java.util.Vector;
@@ -27,6 +27,8 @@ public class testLogFrame extends javax.swing.JFrame {
     public testLogFrame() {
         initValues();
         initComponents();
+        setSize(800, 500);
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -49,14 +51,32 @@ public class testLogFrame extends javax.swing.JFrame {
         addDataBtn = new javax.swing.JButton();
         nextDateBtn = new javax.swing.JButton();
         previousDateBtn = new javax.swing.JButton();
-        deleteBtn = new javax.swing.JButton();
         totalInDayLabel = new javax.swing.JLabel();
         totalInDayValueLabel = new javax.swing.JLabel();
-        logTable = new javax.swing.JTable();
         jScrollPane = new javax.swing.JScrollPane();
-        changeList = new Vector<>();
-        jButton1.setText("jButton1");
+        logTable = new javax.swing.JTable();
+        deleteBtn = new javax.swing.JButton();
+        backActionBtn = new javax.swing.JButton();
+        nextActionBtn = new javax.swing.JButton();
+        dateChooserLabel = new javax.swing.JLabel();
+        fromDateValueLabel = new javax.swing.JTextField();
+        toDateValueLabel = new javax.swing.JTextField();
+        totalRowCountLabel = new javax.swing.JLabel();
+        amounChoosertLabel = new javax.swing.JLabel();
+        fromAmountValueLabel = new javax.swing.JTextField();
+        toAmountValueLabel = new javax.swing.JTextField();
+        filterActionBtn = new javax.swing.JButton();
+        sortBtn = new javax.swing.JButton();
+        typeChooserCombox = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        itemTypeLabel = new javax.swing.JLabel();
+        typeOfSortValueBtn = new javax.swing.JButton();
+        testText = new javax.swing.JLabel();
 
+        //Khởi tạo các giá trị cần thiết
+        setInitValues();
+
+        
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(null);
 
@@ -79,7 +99,7 @@ public class testLogFrame extends javax.swing.JFrame {
         contentWrapper.add(jScrollPane1);
         jScrollPane1.setBounds(30, 10, 150, 80);
 
-        amountValueLabel.setText("jTextField1");
+//        amountValueLabel.setText("jTextField1");
         contentWrapper.add(amountValueLabel);
         amountValueLabel.setBounds(30, 90, 60, 20);
 
@@ -179,12 +199,142 @@ public class testLogFrame extends javax.swing.JFrame {
         });
         getContentPane().add(deleteBtn);
         deleteBtn.setBounds(330, 200, 51, 23);
-        int width = 800;
-        int height = 600;
-        this.setSize(width, height);
+                backActionBtn.setText("<");
+        backActionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backActionBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(backActionBtn);
+        backActionBtn.setBounds(330, 30, 41, 23);
+
+        nextActionBtn.setText(">");
+        nextActionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextActionBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(nextActionBtn);
+        nextActionBtn.setBounds(370, 30, 41, 23);
+
+        dateChooserLabel.setText("Ngày:");
+        getContentPane().add(dateChooserLabel);
+        dateChooserLabel.setBounds(410, 190, 40, 14);
+
+//        fromDateValueLabel.setText("jTextField1");
+        getContentPane().add(fromDateValueLabel);
+        fromDateValueLabel.setBounds(460, 190, 90, 20);
+
+//        toDateValueLabel.setText("jTextField2");
+        getContentPane().add(toDateValueLabel);
+        toDateValueLabel.setBounds(590, 190, 90, 20);
+
+        totalRowCountLabel.setText("jLabel3");
+        getContentPane().add(totalRowCountLabel);
+        totalRowCountLabel.setBounds(650, 30, 34, 14);
+
+        amounChoosertLabel.setText("Số tiền: ");
+        getContentPane().add(amounChoosertLabel);
+        amounChoosertLabel.setBounds(410, 230, 50, 14);
+
+//        fromAmountValueLabel.setText("jTextField1");
+        fromAmountValueLabel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fromAmountValueLabelActionPerformed(evt);
+            }
+        });
+        getContentPane().add(fromAmountValueLabel);
+        fromAmountValueLabel.setBounds(460, 230, 90, 20);
+
+//        toAmountValueLabel.setText("jTextField2");
+        getContentPane().add(toAmountValueLabel);
+        toAmountValueLabel.setBounds(590, 230, 90, 20);
+
+        getContentPane().add(testText);
+        testText.setBounds(730, 30, 110, 14);
+        
+        filterActionBtn.setText("Lọc");
+        filterActionBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterActionBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(filterActionBtn);
+        filterActionBtn.setBounds(330, 230, 50, 23);
+
+        sortBtn.setText("Sắp xếp");
+        sortBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sortBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(sortBtn);
+        sortBtn.setBounds(310, 260, 80, 23);
+
+        typeChooserCombox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ngày", "Số tiền"}));
+        getContentPane().add(typeChooserCombox);
+        typeChooserCombox.setBounds(460, 260, 57, 20);
+        typeChooserCombox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeChooserComboxActionPerformed(evt);
+            }
+        });
+        
+        jLabel4.setText("jLabel4");
+        getContentPane().add(jLabel4);
+        jLabel4.setBounds(670, 50, 34, 14);
+
+        itemTypeLabel.setText("Mục:");
+        getContentPane().add(itemTypeLabel);
+        itemTypeLabel.setBounds(410, 260, 23, 14);
+
+        typeOfSortValueBtn.setText(this.typeOfSortText);
+        getContentPane().add(typeOfSortValueBtn);
+        typeOfSortValueBtn.setBounds(590, 260, 50, 23);
+        
+        typeOfSortValueBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeOfSortValueBtnActionPerformed(evt);
+            }
+        });
+        
+        
         pack();
     }// </editor-fold>                        
 
+    
+    private void initValues(){
+        this.curDateValue = Utils.DateHelper.getCurrentDateFormatted();
+        this.logsController = new LogsController();
+        this.conditionsForFilter = new Vector<Object[]>();
+        
+        //Thêm điều kiện filter theo ngày
+        this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), "from"});
+        this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), "to"});
+        
+        this.logsController = new LogsController();
+        
+        this.logsController.filter(conditionsForFilter, conditionsForSort);
+        
+        this.totalInUnitTime = this.logsController.getTotalAmountInDay();
+        
+        
+    }
+    
+    private void setInitValues(){
+        //Date
+        this.startDateValue = Utils.DateHelper.getCurrentDateFormatted();
+        this.endDateValue = Utils.DateHelper.getCurrentDateFormatted();
+        this.fromDateValueLabel.setText(this.startDateValue);
+        this.toDateValueLabel.setText(this.startDateValue);
+        
+        //Amount
+        this.fromAmountValueLabel.setText("");
+        this.toAmountValueLabel.setText("");
+        
+        this.typeOfSort = 0;
+        this.typeOfSortText = "A-Z";
+    }
     private void addDataBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
         String note = this.descriptionText.getText();
         BigDecimal amount = new BigDecimal(this.amountValueLabel.getText());
@@ -194,14 +344,14 @@ public class testLogFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                            
     private void nextDateBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        this.curDateValue = DateHelpder.getDateFormattedWithOffset(curDateValue, "d", 1);
+        this.curDateValue = DateHelper.getDateFormattedWithOffset(curDateValue, "d", 1);
         this.dateValueLabel.setText(this.curDateValue);
         LogsDB log =  new LogsDB();
         this.conditionsForFilter.removeAllElements();
         this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
         this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
         logsController.filter(conditionsForFilter, conditionsForSort);
-        this.fillLogTable();
+        this.refreshState();
         
     }                                           
     
@@ -211,22 +361,16 @@ public class testLogFrame extends javax.swing.JFrame {
      */
     private void previousDateBtnActionPerformed(java.awt.event.ActionEvent evt) {                                                
         LogsDB log = new LogsDB();
-        this.curDateValue = DateHelpder.getDateFormattedWithOffset(curDateValue, "d", -1);
+        this.curDateValue = DateHelper.getDateFormattedWithOffset(curDateValue, "d", -1);
         this.dateValueLabel.setText(this.curDateValue);
         this.conditionsForFilter.removeAllElements();
         this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
         this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
         logsController.filter(conditionsForFilter, conditionsForSort);
-        this.fillLogTable();
+        this.refreshState();
     }  
 
-    private void toggleDeleteAll(){
-        this.isDeleteAllActive = !this.isDeleteAllActive;
-        for (int i  =0; i < logTable.getRowCount(); i++){
-            // Chọn các hàng được chọn
-            logTable.setValueAt(this.isDeleteAllActive, i, 5);
-        }
-    }
+
     
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
         Vector<Integer> idList = new Vector<Integer>();
@@ -239,9 +383,113 @@ public class testLogFrame extends javax.swing.JFrame {
             }
         }
         logs.deleteLogs(idList);
-        this.logsController.filter(conditionsForFilter, conditionsForSort);
-        this.fillLogTable();
+        this.refreshState();
     } 
+    
+    private void backActionBtnActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        // TODO add your handling code here:
+    }                                             
+
+    private void nextActionBtnActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        // TODO add your handling code here:
+    }                                             
+
+    private void fromAmountValueLabelActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+        // TODO add your handling code here:
+    }      
+    private void typeChooserComboxActionPerformed(java.awt.event.ActionEvent evt) {                                                  
+        // TODO add your handling code here:
+    }   
+    
+    private void filterActionBtnActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        this.conditionsForFilter.clear();
+        this.conditionsForSort.clear();
+        
+        //cập nhật lại value của date filter
+        this.startDateValue = this.fromDateValueLabel.getText();
+        this.endDateValue = this.toDateValueLabel.getText();
+        
+        this.conditionsForFilter = this.getConditionForFilter();
+        this.conditionsForSort = this.getConditionForSort();
+        
+        this.refreshState();
+    }
+    
+    private void typeOfSortValueBtnActionPerformed(java.awt.event.ActionEvent evt) {                                                   
+        if (this.typeOfSort == 0){
+            this.typeOfSort = 1;
+            this.typeOfSortText = "DESC";
+        }
+        else if (this.typeOfSort == 1){
+            this.typeOfSort = 0;
+            this.typeOfSortText = "ASC";
+        }
+        this.typeOfSortValueBtn.setText(this.typeOfSortText);
+        this.refreshState();
+
+    }  
+    
+    private Vector<Object[]> getConditionForFilter(){
+        Vector<Object[]> ans = new Vector<>();
+        
+        if (DateHelper.isDateStringAvailable(this.startDateValue)){
+            ans.add(new Object[]{"date", this.startDateValue, "from"});
+        }
+        
+        if (DateHelper.isDateStringAvailable(this.endDateValue)){
+            ans.add(new Object[]{"date", this.endDateValue, "to"});
+        }
+        
+        if (this.fromAmountValueLabel.getText() != ""){
+            ans.add(new Object[]{"price", this.fromAmountValueLabel.getText(), "from"});
+        }
+        
+        if (this.toAmountValueLabel.getText() != ""){
+            ans.add(new Object[]{"price", this.toAmountValueLabel.getText(), "to"});
+        }
+        return ans;
+    }
+
+    
+    private Vector<Object[]> getConditionForSort(){
+        Vector<Object[]> ans = new Vector<>();
+        String sortType = "";
+        String colToSort = "";
+        //Lấy name colToSort
+        if (this.typeChooserCombox.getSelectedItem() == "Ngày"){
+            colToSort = "date";
+        }
+        else if (this.typeChooserCombox.getSelectedItem() == "Số tiền"){
+            colToSort = "price";
+        }
+        
+        //Lấy kiểu sort
+        if (this.typeOfSort == 0){
+            sortType = "ASC";
+        }
+        else if (this.typeOfSort == 1){
+            sortType = "DESC";
+        }
+        ans.add(new Object[]{colToSort, sortType});
+
+        return ans;
+    }
+    
+                                                
+
+    private void sortBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        this.conditionsForSort.clear();
+        String sortType = "";
+        if (this.typeOfSort == 0){
+            sortType = "ASC";
+        }
+        else if (this.typeOfSort == 1){
+            sortType = "DESC";
+        }
+        this.conditionsForSort.add(new Object[]{"price", sortType});
+        this.refreshState();
+    }  
+    
     private void logTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logTableMouseClicked
         DefaultTableModel model = (DefaultTableModel) logTable.getModel();
         int row = logTable.getSelectedRow();
@@ -261,32 +509,36 @@ public class testLogFrame extends javax.swing.JFrame {
 
 
     }//GEN-LAST:event_logTableMouseClicked
-
+    
+    
+    private String getDateValueLabel(){
+        if (this.startDateValue.equals(this.endDateValue)){
+            return this.startDateValue;
+        }
+        else{
+            return this.startDateValue + " - " + this.endDateValue;
+        }
+    }
+    
     private void refreshState(){
         this.logsController.filter(this.conditionsForFilter, this.conditionsForSort);
         this.fillLogTable();
         this.totalInUnitTime = this.logsController.getTotalAmountInDay();
         this.totalInDayValueLabel.setText(this.totalInUnitTime.toString());
+        this.testText.setText(this.getDateValueLabel());
+
     }
     
-    private void initValues(){
-        this.curDateValue = Utils.DateHelpder.getCurrentDateFormatted();
-        this.logsController = new LogsController();
-        this.conditionsForFilter = new Vector<Object[]>();
-        
-        //Thêm điều kiện filter theo ngày
-        this.conditionsForFilter.add(new Object[]{"date",DateHelpder.getCurrentDateFormatted(), "from"});
-        this.conditionsForFilter.add(new Object[]{"date",DateHelpder.getCurrentDateFormatted(), "to"});
-        
-        this.logsController = new LogsController();
-        
-        this.logsController.filter(conditionsForFilter, conditionsForSort);
-        
-        this.totalInUnitTime = this.logsController.getTotalAmountInDay();
-        
-        
+    private void toggleDeleteAll(){
+        this.isDeleteAllActive = !this.isDeleteAllActive;
+        for (int i  =0; i < logTable.getRowCount(); i++){
+            // Chọn các hàng được chọn
+            logTable.setValueAt(this.isDeleteAllActive, i, 5);
+        }
     }
+
     
+
     private void fillLogTable(){
         DefaultTableModel model = (DefaultTableModel) logTable.getModel();
         model.setRowCount(0);
@@ -296,7 +548,7 @@ public class testLogFrame extends javax.swing.JFrame {
         }
     }  
 
-    
+
     
     /**
      * @param args the command line arguments
@@ -335,25 +587,45 @@ public class testLogFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton addDataBtn;
+    private javax.swing.JLabel amounChoosertLabel;
     private javax.swing.JTextField amountValueLabel;
+    private javax.swing.JButton backActionBtn;
     private javax.swing.JPanel contentWrapper;
+    private javax.swing.JLabel dateChooserLabel;
     private javax.swing.JLabel dateValueLabel;
+    private javax.swing.JButton deleteBtn;
     private javax.swing.JTextArea descriptionText;
+    private javax.swing.JButton filterActionBtn;
+    private javax.swing.JTextField fromAmountValueLabel;
+    private javax.swing.JTextField fromDateValueLabel;
+    private javax.swing.JLabel itemTypeLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JTable logTable;
+    private javax.swing.JButton nextActionBtn;
     private javax.swing.JButton nextDateBtn;
     private javax.swing.JButton previousDateBtn;
+    private javax.swing.JButton sortBtn;
+    private javax.swing.JTextField toAmountValueLabel;
+    private javax.swing.JTextField toDateValueLabel;
     private javax.swing.JLabel totalInDayLabel;
     private javax.swing.JLabel totalInDayValueLabel;
-    private javax.swing.JTable logTable;
-    private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JButton deleteBtn;
+    private javax.swing.JLabel totalRowCountLabel;
+    private javax.swing.JComboBox<String> typeChooserCombox;
+    private javax.swing.JButton typeOfSortValueBtn;
+    private javax.swing.JLabel testText;
 
+
+    private DateHelper dateHelper = new DateHelper();
     private int idUser = 0;
     private int mode = 0;
     private String curDateValue;
+    private String startDateValue;
+    private String endDateValue;
     private LogsController logsController;
     private Vector<Integer> changeList;
     private Vector<Object[]> conditionsForFilter = new Vector<>();
@@ -362,5 +634,7 @@ public class testLogFrame extends javax.swing.JFrame {
     private boolean isDeleteAllActive = false;
     private BigDecimal totalInUnitTime;
     private LogsDB logs = new LogsDB();
+    private int typeOfSort = 0;
+    private String typeOfSortText;
     // End of variables declaration                   
 }

@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.CallableStatement;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import Utils.DateHelpder;
+import Utils.DateHelper;
 import java.sql.Types;
 import java.util.Vector;
 
@@ -39,7 +39,7 @@ public class LogsDB {
                 callableStatement.setInt(1, ID_Type);
                 callableStatement.setObject(2, Price); 
                 callableStatement.setString(3, Note); 
-                callableStatement.setString(4, DateHelpder.convertStringToSQLDate(DateString)); 
+                callableStatement.setString(4, DateHelper.convertStringToSQLDate(DateString)); 
                 callableStatement.setInt(5,ID_User);
                 
                 // Đặt loại dữ liệu và đăng ký OUTPUT parameter
@@ -167,6 +167,7 @@ public class LogsDB {
                 }
             }
         }
+        System.out.println(whereString + " " + orderString);
         try (Connection connection = getConnection()) {
             // Gọi stored procedure với tham số
             String storedProcedureCall = "{call dbo.GetLogsByCondition(?,?)}";
@@ -184,7 +185,7 @@ public class LogsDB {
                     Object[] item = new Object[6];
                     item[0] = rs.getInt("ID_Log");
                     item[1] = rs.getInt("ID_User");
-                    item[2] = rs.getInt("ID_Type");
+                    item[2] = rs.getString("Name_Type");
                     item[3] = rs.getObject("Price");
                     item[4] = rs.getString("Note");
                     item[5] = rs.getString("Date");
