@@ -4,6 +4,8 @@ import java.time.format.DateTimeFormatter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 public class DateHelper {
 
     /**
@@ -231,5 +233,31 @@ public class DateHelper {
     
     public static boolean isDateStringAvailable(String dateToCheck){
         return isDateStringAvailable(dateToCheck, "dd/mm/yyyy");
+    }
+    
+    public static boolean checkValidableDateCondition(String startDate, String endDate, String format){
+        boolean check = false;
+        if (startDate.equals("") || endDate.equals("")){
+            check = true;
+        }
+        if (!isDateStringAvailable(startDate, format) && !startDate.equals("")){
+            check = false;
+        }
+        else if (!isDateStringAvailable(endDate, format) && !endDate.equals("")){
+            check = false;
+        }
+        else {
+            if (calDateDiffBetweenToDate(startDate, endDate, format) < 0){
+                check = false;
+            }
+            else{
+                check = true;
+            }
+        }
+        return check;
+    }
+    
+    public static boolean checkValidableDateCondition(String startDate, String endDate){
+        return checkValidableDateCondition(startDate, endDate, "dd/MM/yyyy");
     }
 }

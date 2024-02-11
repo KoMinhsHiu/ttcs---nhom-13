@@ -21,6 +21,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import model.objects.TypesDB;
+import Utils.constants;
 /**
  *
  * @author sidac
@@ -381,13 +382,15 @@ public class testLogFrame extends javax.swing.JFrame {
 
     
     private void initValues(){
+        //Thay bằng ngày hiện tại
         this.curDateValue = Utils.DateHelper.getCurrentDateFormatted();
         this.logsController = new LogsController();
         this.conditionsForFilter = new Vector<Object[]>();
+        this.changeList = new Vector<>();
         
-        //Thêm điều kiện filter theo ngày
-        this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), "from"});
-        this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), "to"});
+        //Khởi tạo điều kiện filter theo ngày hiện tại
+        this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), constants.startValNameForDB});
+        this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), constants.endValNameForDB});
         
         this.logsController = new LogsController();
         
@@ -395,14 +398,16 @@ public class testLogFrame extends javax.swing.JFrame {
         
         this.totalInUnitTime = this.logsController.getTotalAmountInDay();
         
+        //Khởi tạo types value = cách query DB và lưu vào biến nội bộ
         this.types.setTypes();
         
     }
     
     private void setInitValues(){
-        //Date
+        //Set value cho date
         this.startDateValue = Utils.DateHelper.getCurrentDateFormatted();
         this.endDateValue = Utils.DateHelper.getCurrentDateFormatted();
+        //Hiển thị value date
         this.fromDateValueLabel.setText(this.startDateValue);
         this.toDateValueLabel.setText(this.startDateValue);
         
@@ -411,27 +416,29 @@ public class testLogFrame extends javax.swing.JFrame {
         this.toAmountValueLabel.setText("");
         
         this.typeOfSort = 0;
-        this.typeOfSortText = "A-Z";
+        this.typeOfSortText = constants.typeOfSortTextAsc;
     }
     private void addDataBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
         String note = this.descriptionText.getText();
         BigDecimal amount = new BigDecimal(this.amountValueLabel.getText());
         this.logsController.addLog(new LogO(this.typeCombox.getSelectedItem().toString(), this.types.findId(this.typeCombox.getSelectedItem().toString()), this.idUser, amount, note, this.curDateValue), 1);
-        this.logsController.printLogs();
+
         this.refreshState();
         // TODO add your handling code here:
     }                            
     private void nextDateBtnActionPerformed(java.awt.event.ActionEvent evt) {
         this.curDateValue = DateHelper.getDateFormattedWithOffset(curDateValue, "d", 1);
+        
         this.dateValueLabel.setText(this.curDateValue);
-        LogsDB log =  new LogsDB();
-        this.conditionsForFilter.removeAllElements();
-        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
-        this.conditionsForFilter.add( new Object[]{"date", this.dateValueLabel.getText(), "to"});
+        
+        this.updateConditionForFilter();
+        
         logsController.filter(conditionsForFilter, conditionsForSort);
         this.refreshState();
         
     }                                           
+    
+
     
     /**
      * Đổi ngày (trước curDate 1 day)
@@ -441,9 +448,10 @@ public class testLogFrame extends javax.swing.JFrame {
         LogsDB log = new LogsDB();
         this.curDateValue = DateHelper.getDateFormattedWithOffset(curDateValue, "d", -1);
         this.dateValueLabel.setText(this.curDateValue);
-        this.conditionsForFilter.removeAllElements();
-        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
-        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
+        
+        //Cập nhật lại date
+        this.updateConditionForFilter();
+        
         logsController.filter(conditionsForFilter, conditionsForSort);
         this.refreshState();
     }  
@@ -486,11 +494,18 @@ public class testLogFrame extends javax.swing.JFrame {
         //cập nhật lại value của date filter
         this.startDateValue = this.fromDateValueLabel.getText();
         this.endDateValue = this.toDateValueLabel.getText();
-        
-        this.conditionsForFilter = this.getConditionForFilter();
-        this.conditionsForSort = this.getConditionForSort();
-        
-        this.refreshState();
+        if (!DateHelper.checkValidableDateCondition(startDateValue, endDateValue)){
+            MessageBox.showError(rootPane, "Ngày không hợp lệ");
+        }
+        else if (!(this.fromAmountValueLabel.getText().equals("") || this.toAmountValueLabel.getText().equals("")) && Integer.parseInt(this.fromAmountValueLabel.getText()) > Integer.parseInt(this.toAmountValueLabel.getText())){
+            MessageBox.showError(rootPane, "Số không hợp lệ");
+        }
+        else{
+            this.conditionsForFilter = this.getConditionForFilter();
+            this.conditionsForSort = this.getConditionForSort();
+            this.refreshState();         
+        }
+
     }
     
     private void typeOfSortValueBtnActionPerformed(java.awt.event.ActionEvent evt) {                                                   
@@ -507,6 +522,47 @@ public class testLogFrame extends javax.swing.JFrame {
 
     }  
     
+    private void sortBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
+        this.conditionsForSort.clear();
+        String sortType = "";
+        if (this.typeOfSort == 0){
+            sortType = "ASC";
+        }
+        else if (this.typeOfSort == 1){
+            sortType = "DESC";
+        }
+        this.conditionsForSort.add(new Object[]{"price", sortType});
+        this.refreshState();
+    }  
+    
+    private void logTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logTableMouseClicked
+        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+        int row = logTable.getSelectedRow();
+        int id = (int)model.getValueAt(row, 0);
+        BigDecimal amount = new BigDecimal("0");
+        try {
+            amount = (BigDecimal) model.getValueAt(row, 2);
+            System.out.print(amount);
+        }
+        catch(Exception e){
+            amount = new BigDecimal((String)model.getValueAt(row, 2));
+        }
+        
+        this.changeList.add(id);
+        this.logsController.updateDataRow(id, (String)model.getValueAt(row, 3), amount);
+        this.logsController.updateLogWitdID(id);
+
+
+    }//GEN-LAST:event_logTableMouseClicked
+    
+    
+    
+    public void updateConditionForFilter(){
+        this.conditionsForFilter.removeAllElements();
+        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
+        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
+    }
+        
     private Vector<Object[]> getConditionForFilter(){
         Vector<Object[]> ans = new Vector<>();
         
@@ -572,41 +628,7 @@ public class testLogFrame extends javax.swing.JFrame {
         return ans;
     }
     
-                                                
-
-    private void sortBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
-        this.conditionsForSort.clear();
-        String sortType = "";
-        if (this.typeOfSort == 0){
-            sortType = "ASC";
-        }
-        else if (this.typeOfSort == 1){
-            sortType = "DESC";
-        }
-        this.conditionsForSort.add(new Object[]{"price", sortType});
-        this.refreshState();
-    }  
-    
-    private void logTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logTableMouseClicked
-        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
-        int row = logTable.getSelectedRow();
-        int id = (int)model.getValueAt(row, 0);
-        BigDecimal amount = new BigDecimal("0");
-        try {
-            amount = (BigDecimal) model.getValueAt(row, 2);
-            System.out.print(amount);
-        }
-        catch(Exception e){
-            amount = new BigDecimal((String)model.getValueAt(row, 2));
-        }
-        
-        this.changeList.add(id);
-        this.logsController.updateDataRow(id, (String)model.getValueAt(row, 3), amount);
-        this.logsController.updateLogWitdID(id);
-
-
-    }//GEN-LAST:event_logTableMouseClicked
-    
+                       
     
     private String getDateValueLabel(){
         if (this.startDateValue.equals(this.endDateValue)){
