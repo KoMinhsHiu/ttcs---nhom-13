@@ -5,7 +5,10 @@
  */
 package view;
 import Utils.DateHelper;
+import Utils.Validator;
+import component.MessageBox;
 import controller.LogsController;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
@@ -15,6 +18,9 @@ import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.JTableHeader;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import model.objects.TypesDB;
 /**
  *
  * @author sidac
@@ -72,6 +78,8 @@ public class testLogFrame extends javax.swing.JFrame {
         itemTypeLabel = new javax.swing.JLabel();
         typeOfSortValueBtn = new javax.swing.JButton();
         testText = new javax.swing.JLabel();
+        typeChooserCom = new javax.swing.JComboBox<>();
+        typeCombox = new javax.swing.JComboBox<>();
 
         //Khởi tạo các giá trị cần thiết
         setInitValues();
@@ -111,7 +119,11 @@ public class testLogFrame extends javax.swing.JFrame {
         });
         contentWrapper.add(addDataBtn);
         addDataBtn.setBounds(70, 110, 59, 23);
-
+        
+        typeCombox.setModel(new javax.swing.DefaultComboBoxModel<>(types.getTypeNames()));
+        contentWrapper.add(typeCombox);
+        typeCombox.setBounds(120, 90, 57, 20);
+        
         jPanel1.add(contentWrapper);
         contentWrapper.setBounds(30, 50, 200, 140);
 
@@ -224,11 +236,29 @@ public class testLogFrame extends javax.swing.JFrame {
 //        fromDateValueLabel.setText("jTextField1");
         getContentPane().add(fromDateValueLabel);
         fromDateValueLabel.setBounds(460, 190, 90, 20);
+        
+        fromDateValueLabel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (!Validator.isDateString(fromDateValueLabel.getText())){
+                    MessageBox.showWrongDateFormat(rootPane);
+                    fromDateValueLabel.grabFocus();
+                };
+            }
+        });
 
 //        toDateValueLabel.setText("jTextField2");
         getContentPane().add(toDateValueLabel);
         toDateValueLabel.setBounds(590, 190, 90, 20);
+        toDateValueLabel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (!Validator.isDateString(toDateValueLabel.getText())){
+                    MessageBox.showWrongDateFormat(rootPane);
+                    toDateValueLabel.grabFocus();
+                };
 
+
+            }
+        });
         totalRowCountLabel.setText("jLabel3");
         getContentPane().add(totalRowCountLabel);
         totalRowCountLabel.setBounds(650, 30, 34, 14);
@@ -239,10 +269,44 @@ public class testLogFrame extends javax.swing.JFrame {
 
 //        fromAmountValueLabel.setText("jTextField1");
         fromAmountValueLabel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fromAmountValueLabelActionPerformed(evt);
             }
         });
+//        fromAmountValueLabel.getDocument().addDocumentListener(new DocumentListener() {
+//            @Override
+//            public void insertUpdate(DocumentEvent e) {
+//                // Xử lý khi có sự thay đổi (chèn)
+//                handleEditEvent();
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent e) {
+//                // Xử lý khi có sự thay đổi (xóa)
+//                handleEditEvent();
+//            }
+//
+//            @Override
+//            public void changedUpdate(DocumentEvent e) {
+//                // Xử lý khi có sự thay đổi (thay đổi)
+//                handleEditEvent();
+//            }
+//            
+//            
+//        });
+        
+        //Nhập xong out ra textfield này thì sẽ kiểm tra, nếu có lỗi thì hiện message rồi yêu cầu nhập lại
+        fromAmountValueLabel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (!Validator.isNumeric(fromAmountValueLabel.getText()) && !fromAmountValueLabel.getText().equals("")){
+                    MessageBox.showNotNumErr(rootPane);
+                    fromAmountValueLabel.grabFocus();
+                };
+
+
+            }
+        });
+
         getContentPane().add(fromAmountValueLabel);
         fromAmountValueLabel.setBounds(460, 230, 90, 20);
 
@@ -250,6 +314,17 @@ public class testLogFrame extends javax.swing.JFrame {
         getContentPane().add(toAmountValueLabel);
         toAmountValueLabel.setBounds(590, 230, 90, 20);
 
+        toAmountValueLabel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (!Validator.isNumeric(toAmountValueLabel.getText()) && !toAmountValueLabel.getText().equals("")){
+                    MessageBox.showNotNumErr(rootPane);
+                    toAmountValueLabel.grabFocus();
+                };
+
+
+            }
+        });
+        
         getContentPane().add(testText);
         testText.setBounds(730, 30, 110, 14);
         
@@ -298,7 +373,9 @@ public class testLogFrame extends javax.swing.JFrame {
             }
         });
         
-        
+        typeChooserCom.setModel(new javax.swing.DefaultComboBoxModel<>(types.getTypeNames("Tất cả")));
+        getContentPane().add(typeChooserCom);
+        typeChooserCom.setBounds(720, 190, 57, 20);
         pack();
     }// </editor-fold>                        
 
@@ -318,6 +395,7 @@ public class testLogFrame extends javax.swing.JFrame {
         
         this.totalInUnitTime = this.logsController.getTotalAmountInDay();
         
+        this.types.setTypes();
         
     }
     
@@ -338,7 +416,7 @@ public class testLogFrame extends javax.swing.JFrame {
     private void addDataBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
         String note = this.descriptionText.getText();
         BigDecimal amount = new BigDecimal(this.amountValueLabel.getText());
-        this.logsController.addLog(new LogO(this.idUser, this.mode, amount, note, this.curDateValue), 1);
+        this.logsController.addLog(new LogO(this.typeCombox.getSelectedItem().toString(), this.types.findId(this.typeCombox.getSelectedItem().toString()), this.idUser, amount, note, this.curDateValue), 1);
         this.logsController.printLogs();
         this.refreshState();
         // TODO add your handling code here:
@@ -349,7 +427,7 @@ public class testLogFrame extends javax.swing.JFrame {
         LogsDB log =  new LogsDB();
         this.conditionsForFilter.removeAllElements();
         this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "from"});
-        this.conditionsForFilter.add(new Object[]{"date", this.dateValueLabel.getText(), "to"});
+        this.conditionsForFilter.add( new Object[]{"date", this.dateValueLabel.getText(), "to"});
         logsController.filter(conditionsForFilter, conditionsForSort);
         this.refreshState();
         
@@ -440,13 +518,32 @@ public class testLogFrame extends javax.swing.JFrame {
             ans.add(new Object[]{"date", this.endDateValue, "to"});
         }
         
-        if (this.fromAmountValueLabel.getText() != ""){
+        //Lấy giá trị của fromAmount để lọc
+        if (this.fromAmountValueLabel.getText().equals("")){
+            
+        }
+        else if (!Validator.isNumeric(fromAmountValueLabel.getText()) ){
+            MessageBox.showError(this, "Vui lòng nhập số vào trường Textfield.");
+        }
+        else {
             ans.add(new Object[]{"price", this.fromAmountValueLabel.getText(), "from"});
         }
         
-        if (this.toAmountValueLabel.getText() != ""){
+        //Lấy giá trị của toAmount để lọc
+        if (this.toAmountValueLabel.getText().equals("")){
+            
+        }
+        else if (!Validator.isNumeric(toAmountValueLabel.getText()) ){
+            MessageBox.showError(this, "Vui lòng nhập số vào trường Textfield.");
+        }
+        else {
             ans.add(new Object[]{"price", this.toAmountValueLabel.getText(), "to"});
         }
+        
+        if (!this.typeChooserCom.getSelectedItem().toString().equals("Tất cả")){
+            ans.add(new Object[]{"type", types.findId(this.typeChooserCom.getSelectedItem().toString()), "exact"});
+        }
+        
         return ans;
     }
 
@@ -548,6 +645,11 @@ public class testLogFrame extends javax.swing.JFrame {
         }
     }  
 
+    private void handleEditEvent(){
+        if (!Validator.isNumeric(this.fromAmountValueLabel.getText())){
+            MessageBox.showError(rootPane, "Lỗi nhập số.");
+        }
+    }
 
     
     /**
@@ -618,7 +720,8 @@ public class testLogFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> typeChooserCombox;
     private javax.swing.JButton typeOfSortValueBtn;
     private javax.swing.JLabel testText;
-
+    private javax.swing.JComboBox<String> typeChooserCom;
+    private javax.swing.JComboBox<String> typeCombox;
 
     private DateHelper dateHelper = new DateHelper();
     private int idUser = 0;
@@ -636,5 +739,7 @@ public class testLogFrame extends javax.swing.JFrame {
     private LogsDB logs = new LogsDB();
     private int typeOfSort = 0;
     private String typeOfSortText;
+    private String typeStringQuery = "all";
+    private TypesDB types = new TypesDB();
     // End of variables declaration                   
 }

@@ -37,6 +37,15 @@ public class LogO {
         // this.User_ID = User_ID;
     }
     
+    public LogO(String Name_Type, int ID_Type, int ID_User, BigDecimal Price, String Note, String DateString){
+        System.out.println(Name_Type + " " + ID_Type);
+        this.ID_Type = ID_Type;
+        this.Name_Type = Name_Type;
+        this.ID_User = ID_User;
+        this.Price = Price;
+        this.Note = Note;
+        this.DateString = DateString;
+    }
     public LogO(int ID_Log, String Name_Type, int ID_User, BigDecimal Price, String Note, String DateString) {
         this.ID_Log = ID_Log;
         this.Name_Type = Name_Type;

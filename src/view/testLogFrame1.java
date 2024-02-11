@@ -36,6 +36,7 @@ public class testLogFrame1 extends javax.swing.JFrame {
         descriptionText = new javax.swing.JTextArea();
         amountValueLabel = new javax.swing.JTextField();
         addDataBtn = new javax.swing.JButton();
+        typeCombox = new javax.swing.JComboBox<>();
         nextDateBtn = new javax.swing.JButton();
         previousDateBtn = new javax.swing.JButton();
         totalInDayLabel = new javax.swing.JLabel();
@@ -59,6 +60,7 @@ public class testLogFrame1 extends javax.swing.JFrame {
         itemTypeLabel = new javax.swing.JLabel();
         typeOfSortValueBtn = new javax.swing.JButton();
         testText = new javax.swing.JLabel();
+        typeChooserCom = new javax.swing.JComboBox<>();
 
         jButton1.setText("jButton1");
 
@@ -96,6 +98,10 @@ public class testLogFrame1 extends javax.swing.JFrame {
         });
         contentWrapper.add(addDataBtn);
         addDataBtn.setBounds(70, 110, 59, 23);
+
+        typeCombox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        contentWrapper.add(typeCombox);
+        typeCombox.setBounds(120, 90, 57, 20);
 
         jPanel1.add(contentWrapper);
         contentWrapper.setBounds(30, 50, 200, 140);
@@ -198,6 +204,11 @@ public class testLogFrame1 extends javax.swing.JFrame {
         amounChoosertLabel.setBounds(410, 230, 50, 14);
 
         fromAmountValueLabel.setText("jTextField1");
+        fromAmountValueLabel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fromAmountValueLabelFocusLost(evt);
+            }
+        });
         fromAmountValueLabel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fromAmountValueLabelActionPerformed(evt);
@@ -258,6 +269,10 @@ public class testLogFrame1 extends javax.swing.JFrame {
         getContentPane().add(testText);
         testText.setBounds(730, 30, 110, 14);
 
+        typeChooserCom.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        getContentPane().add(typeChooserCom);
+        typeChooserCom.setBounds(720, 190, 57, 20);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -311,6 +326,10 @@ public class testLogFrame1 extends javax.swing.JFrame {
     private void totalInDayValueLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_totalInDayValueLabelMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_totalInDayValueLabelMouseClicked
+
+    private void fromAmountValueLabelFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fromAmountValueLabelFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fromAmountValueLabelFocusLost
 
     /**
      * @param args the command line arguments
@@ -379,7 +398,9 @@ public class testLogFrame1 extends javax.swing.JFrame {
     private javax.swing.JLabel totalInDayLabel;
     private javax.swing.JLabel totalInDayValueLabel;
     private javax.swing.JLabel totalRowCountLabel;
+    private javax.swing.JComboBox<String> typeChooserCom;
     private javax.swing.JComboBox<String> typeChooserCombox;
+    private javax.swing.JComboBox<String> typeCombox;
     private javax.swing.JButton typeOfSortValueBtn;
     // End of variables declaration//GEN-END:variables
 }

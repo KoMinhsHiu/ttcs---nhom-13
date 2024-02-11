@@ -176,6 +176,10 @@ public class LogsController {
                     conditionForFilter.add("price <= " + "" + item[1] + "");
                 }
             }
+            
+            else if (item[0] == "type"){
+                conditionForFilter.add("dbo.LOG.ID_Type = " + item[1]);
+            }
         }
         Vector<String> conditionForSort = new Vector<String>();
         for (Object[] item : conditionsForSort){
