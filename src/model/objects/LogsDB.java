@@ -61,10 +61,10 @@ public class LogsDB {
     public void deleteLogWithID(int ID_Log){
         try (Connection connection = getConnection()) {
             // Gọi stored procedure với tham số
-            String storedProcedureCall = "{call dbo.DeleteLogByID(?)}";
+            String storedProcedureCall = "{call dbo.DeleteLogsByIDs(?)}";
             try (CallableStatement callableStatement = connection.prepareCall(storedProcedureCall)) {
                 // Thiết lập giá trị tham số
-                callableStatement.setInt(1, ID_Log);
+                callableStatement.setString(1, Integer.toString(ID_Log));
                 // Thực thi stored procedure
                 callableStatement.executeUpdate();
             }
@@ -90,6 +90,22 @@ public class LogsDB {
         }
     }
     
+    public void restoreLogWithID(int ID_Log){
+        try (Connection connection = getConnection()) {
+            // Gọi stored procedure với tham số
+            String storedProcedureCall = "{call dbo.restoreLogs(?)}";
+            try (CallableStatement callableStatement = connection.prepareCall(storedProcedureCall)) {
+                // Thiết lập giá trị tham số
+                callableStatement.setString(1, Integer.toString(ID_Log));
+                // Thực thi stored procedure
+                callableStatement.executeUpdate();
+                
+                ResultSet rs = callableStatement.getResultSet();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public void findLogWithIDs(String ID_Logs){
         try (Connection connection = getConnection()) {
             // Gọi stored procedure với tham số
@@ -121,6 +137,7 @@ public class LogsDB {
                 callableStatement.setObject(2,data[1]); //ID_Type
                 callableStatement.setObject(3,data[2]); //Price
                 callableStatement.setObject(4,data[3]); //Note
+                System.out.println("Id: " + data[0] + " note: "+ data[3]);
                 callableStatement.setObject(5,data[4]); //DateString
 
                 // Thực thi stored procedure
@@ -150,12 +167,15 @@ public class LogsDB {
         String whereString  = "";
         String orderString = "";
         if (conditions.size() > 0){
-            whereString = "WHERE ";
+            whereString = "WHERE Log.IsDeleted = 0 AND ";
             for (int i = 0; i < conditions.size(); i++) {
                 whereString += conditions.get(i);
                 if (i != conditions.size() - 1){
                     whereString += " AND ";
                 }
+            }
+            if (conditions.size() == 0){
+                whereString = "WHERE Log.IsDeleted = 0 ";
             }
         }
         if (orders.size() > 0){
@@ -167,7 +187,6 @@ public class LogsDB {
                 }
             }
         }
-        System.out.println(whereString + " " + orderString);
         try (Connection connection = getConnection()) {
             // Gọi stored procedure với tham số
             String storedProcedureCall = "{call dbo.GetLogsByCondition(?,?)}";
@@ -216,5 +235,7 @@ public class LogsDB {
             e.printStackTrace();
         }
     }
+
+
     
 }

@@ -22,6 +22,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import model.objects.TypesDB;
 import Utils.constants;
+import controller.ActionStoresController;
+import java.awt.event.MouseAdapter;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import model.objects.ActionStore;
 /**
  *
  * @author sidac
@@ -163,9 +168,8 @@ public class testLogFrame extends javax.swing.JFrame {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null}
             },
-            new String [] {
-                "ID", "Mục", "Số tiền", "Ghi chú", "Thời gian", "Chọn"
-            }
+            //tên cột trong table
+            constants.tableColNamesArr
         ) {
             Class[] types = new Class [] {
                 java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
@@ -182,6 +186,64 @@ public class testLogFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        
+//        logTable.addMouseListener(new MouseAdapter() {
+//            DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+//            
+//            @Override
+//            public void mouseClicked(MouseEvent e) {
+//                int row = logTable.getSelectedRow();
+//                int column = logTable.getSelectedColumn();
+//                contextBeforeAction.clear();
+//                int id = (int)model.getValueAt(row, 0);
+//
+//                ActionStore action = new ActionStore(logsController.getLogByID(id), constants.updateCode, row);
+//                contextBeforeAction.add(action);
+//                System.out.println("context: " + contextBeforeAction.get(0).getData().getNote());
+//                // Xử lý sự kiện click vào ô ở hàng row và cột column
+//            }
+//        });
+        logTable.getModel().addTableModelListener(new TableModelListener() {
+            DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE) {
+//                    int row = e.getFirstRow();
+//                    int column = e.getColumn();
+//                    int id = (int)model.getValueAt(row, 0);
+//                    LogO tempLog = logsController.getLogByID(id);
+//                    LogO tempLog1 = logsController.getLogByID(id);
+//                    Vector<ActionStore> te = new Vector<>();
+//                    te.add(new ActionStore(tempLog1, constants.updateCode, row));
+//                    System.out.println("input1: " + te.get(0).getData().getNote());
+//                    tempLog.setPrice(new BigDecimal((model.getValueAt(row, 2).toString())));
+//                    tempLog.setNote(model.getValueAt(row, 3).toString());
+//                    // Xử lý sự kiện chỉnh sửa xong ô ở hàng row và cột column
+//                    ActionStore tempAction = new ActionStore(tempLog, constants.updateCode, row);
+//                    te.add(tempAction);
+//                    System.out.println("input1: " + te.get(0).getData().getNote());
+//
+//                    actionsController.addActionStore(te);
+                    int row = e.getFirstRow();
+                    int column = e.getColumn();
+                    int id = (int) model.getValueAt(row, 0);
+                    LogO tempLog = logsController.getLogByID(id);
+                    // Tạo một bản sao độc lập của tempLog
+                    LogO tempLog1 = new LogO(tempLog);
+                    Vector<ActionStore> te = new Vector<>();
+                    te.add(new ActionStore(tempLog1, constants.updateCode, row));
+                    System.out.println("input1: " + te.get(0).getData().getNote());
+                    tempLog.setPrice(new BigDecimal((model.getValueAt(row, 2).toString())));
+                    tempLog.setNote(model.getValueAt(row, 3).toString());
+                    // Xử lý sự kiện chỉnh sửa xong ô ở hàng row và cột column
+                    ActionStore tempAction = new ActionStore(tempLog, constants.updateCode, row);
+                    te.add(tempAction);
+                    System.out.println("input2: " + te.get(1).getData().getNote());
+                    actionsController.addActionStore(te);
+                }
+            }
+        });
+
         JTableHeader header = logTable.getTableHeader();
         header.addMouseListener(new MouseInputAdapter() {
             @Override
@@ -196,7 +258,6 @@ public class testLogFrame extends javax.swing.JFrame {
         this.fillLogTable();
         logTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                logTableMouseClicked(evt);
             }
         });
         jScrollPane.setViewportView(logTable);
@@ -212,7 +273,8 @@ public class testLogFrame extends javax.swing.JFrame {
         });
         getContentPane().add(deleteBtn);
         deleteBtn.setBounds(330, 200, 51, 23);
-                backActionBtn.setText("<");
+        
+        backActionBtn.setText("<");
         backActionBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backActionBtnActionPerformed(evt);
@@ -274,28 +336,6 @@ public class testLogFrame extends javax.swing.JFrame {
                 fromAmountValueLabelActionPerformed(evt);
             }
         });
-//        fromAmountValueLabel.getDocument().addDocumentListener(new DocumentListener() {
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                // Xử lý khi có sự thay đổi (chèn)
-//                handleEditEvent();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                // Xử lý khi có sự thay đổi (xóa)
-//                handleEditEvent();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                // Xử lý khi có sự thay đổi (thay đổi)
-//                handleEditEvent();
-//            }
-//            
-//            
-//        });
-        
         //Nhập xong out ra textfield này thì sẽ kiểm tra, nếu có lỗi thì hiện message rồi yêu cầu nhập lại
         fromAmountValueLabel.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -387,6 +427,7 @@ public class testLogFrame extends javax.swing.JFrame {
         this.logsController = new LogsController();
         this.conditionsForFilter = new Vector<Object[]>();
         this.changeList = new Vector<>();
+        this.actionsController = new ActionStoresController();
         
         //Khởi tạo điều kiện filter theo ngày hiện tại
         this.conditionsForFilter.add(new Object[]{"date",DateHelper.getCurrentDateFormatted(), constants.startValNameForDB});
@@ -421,8 +462,13 @@ public class testLogFrame extends javax.swing.JFrame {
     private void addDataBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
         String note = this.descriptionText.getText();
         BigDecimal amount = new BigDecimal(this.amountValueLabel.getText());
-        this.logsController.addLog(new LogO(this.typeCombox.getSelectedItem().toString(), this.types.findId(this.typeCombox.getSelectedItem().toString()), this.idUser, amount, note, this.curDateValue), 1);
-
+        
+        LogO curData = new LogO(this.typeCombox.getSelectedItem().toString(), this.types.findId(this.typeCombox.getSelectedItem().toString()), this.idUser, amount, note, this.curDateValue);
+        this.logsController.addLog(curData, 1);
+        
+        ActionStore action = new ActionStore(curData,"add", logsController.getSize());
+        actionsController.addActionStore(action);
+        
         this.refreshState();
         // TODO add your handling code here:
     }                            
@@ -461,23 +507,31 @@ public class testLogFrame extends javax.swing.JFrame {
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
         Vector<Integer> idList = new Vector<Integer>();
         LogsDB logs = new LogsDB();
+        Vector<ActionStore> actions = new Vector<>();
         for (int i  =0; i < logTable.getRowCount(); i++){
             // Chọn các hàng được chọn
             if (logTable.getValueAt(i, 5) != null && (boolean)logTable.getValueAt(i, 5) == true){
                 int id = (int)logTable.getValueAt(i, 0);
                 idList.add(id);
+                ActionStore action = new ActionStore(logsController.getLogByID(id), "delete", i);
+                actions.add(action);
             }
         }
+        actionsController.addActionStore(actions);
         logs.deleteLogs(idList);
         this.refreshState();
     } 
     
     private void backActionBtnActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
+        this.actionsController.moveBack(logsController.getLogs());
+        
+        this.refreshState();
     }                                             
 
     private void nextActionBtnActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
+        this.actionsController.moveNext(logsController.getLogs());
+        
+        this.refreshState();
     }                                             
 
     private void fromAmountValueLabelActionPerformed(java.awt.event.ActionEvent evt) {                                                     
@@ -519,7 +573,6 @@ public class testLogFrame extends javax.swing.JFrame {
         }
         this.typeOfSortValueBtn.setText(this.typeOfSortText);
         this.refreshState();
-
     }  
     
     private void sortBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
@@ -535,25 +588,24 @@ public class testLogFrame extends javax.swing.JFrame {
         this.refreshState();
     }  
     
-    private void logTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logTableMouseClicked
-        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
-        int row = logTable.getSelectedRow();
-        int id = (int)model.getValueAt(row, 0);
-        BigDecimal amount = new BigDecimal("0");
-        try {
-            amount = (BigDecimal) model.getValueAt(row, 2);
-            System.out.print(amount);
-        }
-        catch(Exception e){
-            amount = new BigDecimal((String)model.getValueAt(row, 2));
-        }
-        
-        this.changeList.add(id);
-        this.logsController.updateDataRow(id, (String)model.getValueAt(row, 3), amount);
-        this.logsController.updateLogWitdID(id);
-
-
-    }//GEN-LAST:event_logTableMouseClicked
+//    private void logTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logTableMouseClicked
+//        DefaultTableModel model = (DefaultTableModel) logTable.getModel();
+//        int row = logTable.getSelectedRow();
+//        int id = (int)model.getValueAt(row, 0);
+//        BigDecimal amount = new BigDecimal("0");
+//        try {
+//            amount = (BigDecimal) model.getValueAt(row, 2);
+//        }
+//        catch(Exception e){
+//            amount = new BigDecimal((String)model.getValueAt(row, 2));
+//        }
+//        
+//        this.changeList.add(id);
+//        this.logsController.updateDataRow(id, (String)model.getValueAt(row, 3), amount);
+//        this.logsController.updateLogWitdID(id);
+//
+//
+//    }//GEN-LAST:event_logTableMouseClicked
     
     
     
@@ -755,7 +807,7 @@ public class testLogFrame extends javax.swing.JFrame {
     private Vector<Integer> changeList;
     private Vector<Object[]> conditionsForFilter = new Vector<>();
     private Vector<Object[]> conditionsForSort = new Vector<>();
-    private final String[] rowLogTableStructure = new String[]{"id", "idOfItemInCategory", "price", "note", "date"};
+    private final String[] rowLogTableStructure = constants.rowLogTableStructure;
     private boolean isDeleteAllActive = false;
     private BigDecimal totalInUnitTime;
     private LogsDB logs = new LogsDB();
@@ -763,5 +815,7 @@ public class testLogFrame extends javax.swing.JFrame {
     private String typeOfSortText;
     private String typeStringQuery = "all";
     private TypesDB types = new TypesDB();
+    private ActionStoresController actionsController;
+    private Vector<ActionStore> contextBeforeAction = new Vector<>();
     // End of variables declaration                   
 }

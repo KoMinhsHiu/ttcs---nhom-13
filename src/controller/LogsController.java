@@ -103,6 +103,19 @@ public class LogsController {
         }
     }
     
+    public int getIndexInLogs(int id){
+        for (int i=0 ;i < logs.size(); i++){
+            if (logs.get(i).getID() == id){
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    public int getIndexInLogs(LogO log){
+        return getIndexInLogs(log.getID());
+    }
+    
     public void setLogs(Vector<LogO> logs){
         this.logs = logs;
     }
