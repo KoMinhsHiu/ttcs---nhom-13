@@ -89,11 +89,11 @@ public class ChiJPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_ThemMucActionPerformed
 
     private void XoaMucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XoaMucActionPerformed
-   
+        DanhMucChi.xoaMucActionPerformed(Danhmuc);
     }//GEN-LAST:event_XoaMucActionPerformed
 
     private void SuaMucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SuaMucActionPerformed
-
+        DanhMucChi.suaMucActionPerformed(Danhmuc);
     }//GEN-LAST:event_SuaMucActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
