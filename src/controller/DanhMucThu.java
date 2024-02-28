@@ -24,6 +24,54 @@ public class DanhMucThu {
     
     
     
+    //cập nhật lại giao diện panel_danhmuc
+    public static void updateDanhMucThuPanel(JPanel panel_danhmuc, ButtonGroup buttonGroup1, JButton button_chinhsua1) {
+        // Xóa các thành phần hiện tại trong panel
+        JButton buttonChinhsua1 = button_chinhsua1;
+        panel_danhmuc.removeAll();
+        panel_danhmuc.add(buttonChinhsua1);
+
+        // Lấy danh sách cập nhật các loại
+        TypeController typeController = new TypeController();
+        List<TypeO> types = typeController.getAllTypeExpenses();
+        int length = types.size();
+        int rows = (int) length / 3 + 1;
+        panel_danhmuc.setLayout(new GridLayout(rows, 3));
+
+        for (TypeO type : types) {
+            ImageIcon icon;
+            JToggleButton toggleButton;
+
+            if (!(type.getIcon_Path() == null)) {
+                icon = new ImageIcon(type.getIcon_Path());
+                toggleButton = new JToggleButton(type.getName_Type(), icon);
+            } else {
+                toggleButton = new JToggleButton(type.getName_Type());
+            }
+
+            toggleButton.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+            toggleButton.setActionCommand(String.valueOf(type.getID_Type()));
+            toggleButton.setForeground(new Color(333333));
+
+            toggleButton.setBackground(new Color(255, 230, 230));
+            toggleButton.setMaximumSize(new java.awt.Dimension(50, 50));
+            toggleButton.setMinimumSize(new java.awt.Dimension(10, 10));
+            toggleButton.setPreferredSize(new Dimension(50, 50));
+
+            panel_danhmuc.add(toggleButton);
+            buttonGroup1.add(toggleButton);
+        }
+
+        // Vẽ lại và xác nhận lại panel để phản ánh các thay đổi
+        panel_danhmuc.repaint();
+        panel_danhmuc.revalidate();
+        panel_danhmuc.add(buttonChinhsua1);
+        buttonGroup1.add(buttonChinhsua1);
+    }
+    
+    
+    
+    
      // lấy danh mục trong cơ sở dữ liệu để đưa ra jcombobox
     public static void populateDanhmucComboBox(JComboBox<String> Danhmuc) {
         String sql = "SELECT Name_Type FROM Type WHERE Receipts_Or_expenses = 0";
