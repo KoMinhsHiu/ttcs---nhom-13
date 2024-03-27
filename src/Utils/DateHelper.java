@@ -75,6 +75,22 @@ public class DateHelper {
         }
     }
 
+    public static String convertStringDateFormat(String inputDate, String inputFormat, String outputFormat) {
+        SimpleDateFormat inputDateFormat = new SimpleDateFormat(inputFormat);
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat(outputFormat);
+
+        try {
+            // Chuyển đổi chuỗi ngày/tháng đầu vào thành đối tượng Date
+            Date date = inputDateFormat.parse(inputDate);
+            // Chuyển đổi đối tượng Date thành chuỗi theo định dạng đầu ra
+            String outputDate = outputDateFormat.format(date);
+            return outputDate;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     /**
      * Chuyển string dd/MM/yyyy sang sqlDate yyyy-MM-dd
      * @param inputDate
